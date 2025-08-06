@@ -1,4 +1,15 @@
-// Encurtar link
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
+const nanoid = require('nanoid').nanoid;
+require('dotenv').config();
+
+const connection = require('./database');
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Rota para encurtar
 app.post('/encurtar', (req, res) => {
     const { url } = req.body;
     if (!url) return res.status(400).json({ error: 'URL obrigatória' });
@@ -15,7 +26,7 @@ app.post('/encurtar', (req, res) => {
     );
 });
 
-// Redirecionar link
+// Rota para redirecionar
 app.get('/:codigo', (req, res) => {
     const { codigo } = req.params;
 
@@ -30,3 +41,8 @@ app.get('/:codigo', (req, res) => {
         }
     );
 });
+
+// Iniciar servidor
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+
