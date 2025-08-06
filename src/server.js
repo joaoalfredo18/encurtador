@@ -1,15 +1,24 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const nanoid = require('nanoid').nanoid;
+const { nanoid } = require('nanoid');
+const path = require('path');
 require('dotenv').config();
-
 const connection = require('./database');
 
+// Middleware para ler JSON e formulários
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Rota para encurtar
+// Servir arquivos estáticos da pasta public
+app.use(express.static(path.join(__dirname, '..', 'public')));
+
+// Página inicial
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+});
+
+// Rota para encurtar links
 app.post('/encurtar', (req, res) => {
     const { url } = req.body;
     if (!url) return res.status(400).json({ error: 'URL obrigatória' });
@@ -42,7 +51,7 @@ app.get('/:codigo', (req, res) => {
     );
 });
 
-// Iniciar servidor
+// Porta para Render
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
 
